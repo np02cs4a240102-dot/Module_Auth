@@ -1,74 +1,42 @@
 package marks;
-import java.util.List;
-import java.util.Map;
-public class main { public static void main(String[] args) {
 
-    // Initialize DAOs and Services
-    MarksDAO marksDAO = new MarksDAO();
-    reportDAO reportDAO = new reportDAO();
-    GradeService gradeService = new GradeService(marksDAO);
+public class Main {
+    public static void main(String[] args) {
 
-    // Add courses
-    reportDAO.addCourse(1, "Math");
-    reportDAO.addCourse(2, "Science");
-    reportDAO.addCourse(3, "History");
+        // Create DAO and service
+        MarksDAO marksDAO = new MarksDAO();
+        GradeService gradeService = new GradeService(marksDAO);
 
-    // Add students' attendance
-    reportDAO.addAttendance(101, 92.5);
-    reportDAO.addAttendance(102, 68.0);
-    reportDAO.addAttendance(103, 80.0);
+        // Add some marks
+        Marks student1Course1 = new Marks(1, 101, 1, 95); // studentId 101, courseId 1, marks 95
+        Marks student2Course1 = new Marks(2, 102, 1, 72); // studentId 102, courseId 1, marks 72
+        Marks student3Course2 = new Marks(3, 103, 2, 58); // studentId 103, courseId 2, marks 58
 
-    // Add marks for students
-    Marks m1 = new Marks(1, 101, 1, 95);
-    Marks m2 = new Marks(2, 101, 2, 88);
-    Marks m3 = new Marks(3, 102, 1, 70);
-    Marks m4 = new Marks(4, 103, 3, 60);
+        marksDAO.addMarks(student1Course1);
+        marksDAO.addMarks(student2Course1);
+        marksDAO.addMarks(student3Course2);
 
-    marksDAO.addMarks(m1);
-    marksDAO.addMarks(m2);
-    marksDAO.addMarks(m3);
-    marksDAO.addMarks(m4);
+        // Assign grades
+        gradeService.assignGrade(student1Course1);
+        gradeService.assignGrade(student2Course1);
+        gradeService.assignGrade(student3Course2);
 
-    // Assign grades
-    gradeService.assignGrade(m1);
-    gradeService.assignGrade(m2);
-    gradeService.assignGrade(m3);
-    gradeService.assignGrade(m4);
+        // Print all students' grades
+        printMarks(student1Course1);
+        printMarks(student2Course1);
+        printMarks(student3Course2);
 
-    // Add marks to reportDAO (for generating StudentReport)
-    reportDAO.addMarks(m1);
-    reportDAO.addMarks(m2);
-    reportDAO.addMarks(m3);
-    reportDAO.addMarks(m4);
-
-    // Generate student reports
-    System.out.println("===== Student Reports =====");
-    for (int studentId : new int[]{101, 102, 103}) {
-        StudentReport sr = reportDAO.generateStudentReport(studentId);
-        System.out.println("Student ID: " + sr.getStudentId());
-        List<String> courses = sr.getCourses();
-        List<Double> marks = sr.getMarks();
-        for (int i = 0; i < courses.size(); i++) {
-            System.out.println("Course: " + courses.get(i) + ", Marks: " + marks.get(i));
+        // Get marks by student
+        System.out.println("\nMarks for student 101:");
+        for (Marks m : marksDAO.getMarksByStudent(101)) {
+            printMarks(m);
         }
-        System.out.println("Attendance: " + sr.getAttendancePercentage() + "%");
-        System.out.println("-----------------------------");
     }
 
-    // Get defaulter list (attendance < 75%)
-    List<Integer> defaulters = reportDAO.getDefaulterList(75.0);
-    System.out.println("===== Defaulter List =====");
-    for (int id : defaulters) {
-        System.out.println("Student ID: " + id);
-    }
-
-    // Generate course attendance report for Math
-    System.out.println("===== Course Attendance Report (Math) =====");
-    Map<String, Double> courseAttendance = reportDAO.generateCourseAttendanceReport(1);
-    for (Map.Entry<String, Double> entry : courseAttendance.entrySet()) {
-        System.out.println(entry.getKey() + " -> " + entry.getValue() + "%");
+    private static void printMarks(Marks marks) {
+        System.out.println("Student ID: " + marks.getStudentId() +
+                ", Course ID: " + marks.getCourseId() +
+                ", Marks: " + marks.getMarks() +
+                ", Grade: " + marks.getGrade());
     }
 }
-}
-
-
