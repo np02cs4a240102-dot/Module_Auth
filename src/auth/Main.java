@@ -7,7 +7,7 @@ public class Main {
         UserDAO userDAO = new UserDAO();
         AuthService authService = new AuthService(userDAO);
 
-        // ===== Add Users =====
+        
         User user1 = new User(1, "john", "1234");
         User user2 = new User(2, "alice", "abcd");
         userDAO.saveUser(user1);
@@ -23,12 +23,12 @@ public class Main {
 
         System.out.println("\n");
 
-        // ===== Change Password =====
+        
         System.out.println("Changing john's password from 1234 to 5678...");
         boolean changed = authService.changePassword(1, "1234", "5678");
         System.out.println("Password changed: " + changed);
 
-        // ===== Authenticate Again =====
+       
         System.out.println("\nAuthenticating john with new password 5678: " +
                 authService.authenticate("john", "5678")); // true
 
